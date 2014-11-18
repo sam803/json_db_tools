@@ -6,9 +6,15 @@ import uuid
 import shutil
 import md5
 import json
+import datetime
 from bson import json_util
 
 export_table = '_nhp_export'
+
+
+def getTimestamp():
+  now = datetime.datetime.now()
+  return now.strftime('%Y%m%d%H%M%S')
 
 def getHost():
   s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -32,7 +38,7 @@ def parseFileName(path):
 
 
 def compress(name, dirpath, outdir, mode='bz2'):
-  tarname = os.path.join(outdir, getHost() + "." + name + ".tar." + mode)
+  tarname = os.path.join(outdir, name + '.' + getHost() + "." + getTimestamp() + ".tar." + mode)
   tar = tarfile.open(tarname, "w:" + mode)
   for d,dn,fn in os.walk(dirpath):
     for f in fn:
