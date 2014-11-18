@@ -85,5 +85,7 @@ if __name__ == "__main__":
   #commit any changes to export table
   connection.commit()
   connection.close()
-  print 'created ' + utils.compress(dbname, tmpDir, outDir)
+  compressed = utils.compress(dbname, tmpDir, outDir)
+  if compressed != None:
+    print 'created ' +  compressed
   utils.removeTmpDir(tmpDir)

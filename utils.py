@@ -43,8 +43,13 @@ def compress(name, dirpath, outdir, mode='bz2'):
   for d,dn,fn in os.walk(dirpath):
     for f in fn:
       path = os.path.join(d, f)
-      tar.add(name=path, arcname=f)
+      if os.path.getsize(path) > 0:
+        tar.add(name=path, arcname=f)
   tar.close()
+  if os.path.getsize(tarname) == 0:
+    print tarname + ' is zero bytes, deleting...'
+    os.remove(tarname)
+    return None
   return tarname
 
 def uncompress(path, mode='bz2'):

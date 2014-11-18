@@ -60,6 +60,7 @@ if __name__ == "__main__":
   connection.close() 
   track_connection.commit()
   track_connection.close()
-
-  print 'created ' + utils.compress(dbname, tmpDir, outDir) 
+  compressed = utils.compress(dbname, tmpDir, outDir) 
+  if compressed != None:
+    print 'created ' + compressed
   utils.removeTmpDir(tmpDir)
