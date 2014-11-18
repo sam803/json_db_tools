@@ -45,11 +45,13 @@ def compress(name, dirpath, outdir, mode='bz2'):
       path = os.path.join(d, f)
       if os.path.getsize(path) > 0:
         tar.add(name=path, arcname=f)
-  tar.close()
   if len(tar.getnames()) == 0:
+    tar.close()
     print tarname + ' contains no files, deleting...'
     os.remove(tarname)
     return None
+
+  tar.close()
   return tarname
 
 def uncompress(path, mode='bz2'):
