@@ -22,12 +22,7 @@ def geolocateIPs(d):
       geo = geolite2.lookup(val)
       if geo != None:
         match = geo.to_dict()
-        match['lat'] = match['location'][0]
-        match['long'] = match['location'][1]
         del d[key]
-        del match['timezone']
-        del match['subdivisions']
-        del match['location']
         d[key] = match
 
 
