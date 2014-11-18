@@ -46,8 +46,8 @@ def compress(name, dirpath, outdir, mode='bz2'):
       if os.path.getsize(path) > 0:
         tar.add(name=path, arcname=f)
   tar.close()
-  if os.path.getsize(tarname) == 0:
-    print tarname + ' is zero bytes, deleting...'
+  if len(tar.getnames()) == 0:
+    print tarname + ' contains no files, deleting...'
     os.remove(tarname)
     return None
   return tarname
