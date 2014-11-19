@@ -23,6 +23,8 @@ def geolocateIPs(d):
       if geo != None:
         match = geo.to_dict()
         del d[key]
+        if 'subdivisions' in match:
+           del match['subdivisions']
         d[key] = match
 
 
