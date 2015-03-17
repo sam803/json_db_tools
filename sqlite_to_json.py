@@ -21,26 +21,32 @@ def get_table_names(cursor):
   return res 
 
 if __name__ == "__main__":
-  if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' <path_to_sqlite_db_file> <output_directory>'
+  if len(sys.argv) < 2:
+    print 'Usage: ' + sys.argv[0] + ' <path_to_sqlite_db_file>'
     sys.exit(-1)
 
   connection = sqlite3.connect(sys.argv[1])
   connection.row_factory = dict_factory
   cursor = connection.cursor()
   dbname = os.path.basename(sys.argv[1]);
-  files = []
+
+  tmpDir = utils.createTmpDir(dbname)
+
   if dbname.endswith('.sqlite'):
     dbname = dbname[:-7]
   for name in get_table_names(cursor):
     cursor.execute("select * from " + name)
-    fname = sys.argv[2] + '/' + dbname + '.' +  name + '.json'
-    with open(fname, 'w') as the_file:
-      the_file.write('[\n')
-      for r in cursor.fetchall():
-        nettitude.format_result(r)
-        the_file.write(json.dumps(r) + ',\n')
-      the_file.write(']')
+    fname = dbname + '.' +  name + '.json'
+    res = []
+    for r in cursor.fetchall():
+      if len(r) > 0:
+        utils.format_result(r)
+        res.append(r)
+    if len(res) > 0:
+      with open(tmpDir + '/' + fname, 'w') as the_file:
+        the_file.write(json.dumps(res))
+
   connection.close()
 
-  print 'created ' + nettitude.compress(dbname, files) 
+  print 'created ' + utils.compress(dbname, tmpDir) 
+  utils.removeTmpDir(tmpDir)

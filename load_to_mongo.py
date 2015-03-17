@@ -8,10 +8,7 @@ import pymongo
 import tarfile
 import gzip
 import zlib
-def parse_name(path):
-  fname = os.path.basename(path)
-  arr = fname.split('.')
-  return arr[0],arr[1]
+import uuid
 
 
 if __name__ == "__main__":
@@ -20,23 +17,24 @@ if __name__ == "__main__":
     sys.exit(-1)
 
   fpath = sys.argv[1]
-  source,dbname = parse_name(fpath)
+  source,dbname = utils.parseFileName(fpath)
   
-  #tfile = tarfile.open(mode="r:gz", fileobj = file(fpath))
-  with tarfile.open(mode="r:gz", fileobj = file(fpath)) as tf:
-    for entry in tf:  # list each entry one by one
-       fileobj = tf.extractfile(entry)
-        print fileobj.read()
-  #for member in tfile:
-  #  print member
-    # Print contents of every file
-   # print tfile.extractfile(member).read()
+  client = pymongo.MongoClient('localhost')
+  tmpDir = utils.uncompress(fpath)
+  print tmpDir
+  for f in os.listdir(tmpDir):
+    print f + ' ' +os.path.join(tmpDir, f)
+    with open(os.path.join(tmpDir, f), 'r') as the_file:
+      try:
+        toinsert = json.loads(the_file.read()) 
+        #todo create hash of record and use as _id so no duplicates can be created
+        if len(toinsert) > 0:
+          d,c = utils.parseFileName(f)
+          client[d][c].insert(toinsert)
+          print 'created ' + str(len(toinsert)) + ' records in ' + d + '.' + c
+      except ValueError:
+         print 'could not decode JSON object from ' + f
 
-  #for member in tfile:
-   # name = member.name
-   # print name
-    #print member.tobuf()
-  #tfile.close()
-  #client = pymongo.MongoClient('localhost')
-  #db = client[dbname]
-    
+  utils.removeTmpDir(tmpDir) 
+  
+   
