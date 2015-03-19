@@ -22,8 +22,8 @@ def parseFileName(path):
   return arr[0],arr[1]
 
 
-def compress(name, dirpath, mode='bz2'):
-  tarname = socket.gethostname() + "." + name + ".tar." + mode
+def compress(name, dirpath, outdir, mode='bz2'):
+  tarname = os.path.join(outdir, socket.gethostname() + "." + name + ".tar." + mode)
   tar = tarfile.open(tarname, "w:" + mode)
   for d,dn,fn in os.walk(dirpath):
     for f in fn:

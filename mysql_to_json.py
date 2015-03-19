@@ -26,10 +26,11 @@ def get_table_names(cursor):
   return res 
 
 if __name__ == "__main__":
-  if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' <db_config_file>'
+  if len(sys.argv) < 3:
+    print 'Usage: ' + sys.argv[0] + ' <db_config_file> <output_dir>'
     sys.exit(-1)
 
+  outDir = sys.argv[2]
   config = ConfigParser.ConfigParser()
   config.read(sys.argv[1])
   section_name = 'database_mysql'
@@ -64,5 +65,5 @@ if __name__ == "__main__":
     fname = os.path.join(tmpDir, dbname + '.' +  name + '.json')
     print_table_to_file(cursor, fname) 
   connection.close()
-  print 'created ' + utils.compress(dbname, tmpDir) 
+  print 'created ' + utils.compress(dbname, tmpDir, outDir) 
   utils.removeTmpDir(tmpDir)

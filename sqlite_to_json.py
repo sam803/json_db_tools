@@ -20,15 +20,16 @@ def get_table_names(cursor):
   return res 
 
 if __name__ == "__main__":
-  if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' <path_to_sqlite_db_file>'
+  if len(sys.argv) < 3:
+    print 'Usage: ' + sys.argv[0] + ' <path_to_sqlite_db_file> <output_dir>'
     sys.exit(-1)
 
   connection = sqlite3.connect(sys.argv[1])
   connection.row_factory = dict_factory
   cursor = connection.cursor()
   dbname = os.path.basename(sys.argv[1]);
-
+  
+  outDir = sys.argv[2]
   tmpDir = utils.createTmpDir(dbname)
 
   if dbname.endswith('.sqlite'):
@@ -47,5 +48,5 @@ if __name__ == "__main__":
 
   connection.close()
 
-  print 'created ' + utils.compress(dbname, tmpDir) 
+  print 'created ' + utils.compress(dbname, tmpDir, outDir) 
   utils.removeTmpDir(tmpDir)
