@@ -2,7 +2,6 @@
 import os
 import sqlite3
 import sys
-import json 
 import utils
 
 def dict_factory(cursor, row):
@@ -44,7 +43,7 @@ if __name__ == "__main__":
         res.append(r)
     if len(res) > 0:
       with open(tmpDir + '/' + fname, 'w') as the_file:
-        the_file.write(json.dumps(res))
+        the_file.write(utils.json_dumps(res))
 
   connection.close()
 

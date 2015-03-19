@@ -2,7 +2,6 @@
 import os
 import sqlite3
 import sys
-import json 
 import utils
 import pymongo
 import tarfile
@@ -10,19 +9,6 @@ import gzip
 import zlib
 import uuid
 import md5
-
-def load(filestr):
-  a = json.loads(filestr)
-  for d in a: 
-    m = md5.new()
-    keys = d.keys()
-    keys.sort()
-    for key in keys:
-      v = d[key]
-      if v != None:
-        m.update(str(v))
-    d['_id'] = m.hexdigest()
-  return a
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
@@ -37,7 +23,7 @@ if __name__ == "__main__":
   for f in os.listdir(tmpDir):
     with open(os.path.join(tmpDir, f), 'r') as the_file:
       try:
-        toinsert = load(the_file.read()) 
+        toinsert = utils.json_loads(the_file.read()) 
         #todo create hash of record and use as _id so no duplicates can be created
         if len(toinsert) > 0:
           d,c = utils.parseFileName(f)

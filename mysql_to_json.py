@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import os
 import sys
-import json 
 import mysql.connector
 import datetime
 import utils
@@ -16,7 +15,7 @@ def print_table_to_file(cursor, fname):
       res.append(d)
   if len(res) > 0:
     with open(fname, 'w') as the_file:
-      the_file.write(json.dumps(res))
+      the_file.write(utils.json_dumps(res))
 
 def get_table_names(cursor):
   res = []
