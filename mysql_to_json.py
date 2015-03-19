@@ -42,9 +42,13 @@ if __name__ == "__main__":
   opts = config.options(section_name)
   for o in opts:
     if o == 'username':
-      dbconf['user'] = config.get(section_name, o) 
+      dbconf['user'] = config.get(section_name, o).strip()
+    elif o == 'port':
+      v = config.get(section_name, o).strip()
+      if len(v) > 0:
+        dbconf[o] = int(v)
     else:
-      dbconf[o] = config.get(section_name, o)
+      dbconf[o] = config.get(section_name, o).strip()
  
   if 'database' not in dbconf:
     print 'ERROR: \'database\' must be defined in config file'
