@@ -4,6 +4,7 @@ import sys
 import mysql.connector
 import datetime
 import utils
+import ConfigParser
 
 def print_table_to_file(cursor, fname):
   res = []
@@ -25,18 +26,35 @@ def get_table_names(cursor):
   return res 
 
 if __name__ == "__main__":
-  if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' <database> <user>'
+  if len(sys.argv) < 2:
+    print 'Usage: ' + sys.argv[0] + ' <db_config_file>'
     sys.exit(-1)
-  
-  dbname = sys.argv[1]
-  dbuser = sys.argv[2]
 
-  tmpDir = utils.createTmpDir(dbname)
+  config = ConfigParser.ConfigParser()
+  config.read(sys.argv[1])
+  section_name = 'database_mysql'
+  sections = config.sections()
+  if section_name not in sections:
+    print 'ERROR: ' + sys.argv[1] + ' must contain section called \'' + section_name + '\' with connection details'
+    sys.exit(-1)
 
-  connection = mysql.connector.connect(user = dbuser, database = dbname)
+  dbconf = {} 
+  opts = config.options(section_name)
+  for o in opts:
+    if o == 'username':
+      dbconf['user'] = config.get(section_name, o) 
+    else:
+      dbconf[o] = config.get(section_name, o)
+ 
+  if 'database' not in dbconf:
+    print 'ERROR: \'database\' must be defined in config file'
+    sys.exit(-2)
+
+  dbname = dbconf['database'] 
+  connection = mysql.connector.connect(**dbconf)
   cursor = connection.cursor()
   files = []
+  tmpDir = utils.createTmpDir(dbname)
   for name in get_table_names(cursor):
     cursor.execute("select * from " + name)
     fname = os.path.join(tmpDir, sys.argv[1] + '.' +  name + '.json')
