@@ -61,7 +61,7 @@ if __name__ == "__main__":
   tmpDir = utils.createTmpDir(dbname)
   for name in get_table_names(cursor):
     cursor.execute("select * from " + name)
-    fname = os.path.join(tmpDir, sys.argv[1] + '.' +  name + '.json')
+    fname = os.path.join(tmpDir, dbname + '.' +  name + '.json')
     print_table_to_file(cursor, fname) 
   connection.close()
   print 'created ' + utils.compress(dbname, tmpDir) 
