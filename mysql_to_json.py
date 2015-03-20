@@ -8,12 +8,15 @@ import ConfigParser
 
 def print_table_to_file(cursor, fname):
   desc = cursor.description
-  with open(fname, 'w') as the_file:
+  data = False
+  with open(fname, 'a') as the_file:
     for row in cursor.fetchall():
+      data = True
       d = dict(zip([col[0] for col in desc], row))
       if len(d) > 0:
         utils.format_result(d)
         the_file.write(utils.json_dumps(d) + '\r\n')
+  return data
 
 def get_table_names(cursor):
   res = []
@@ -52,15 +55,20 @@ if __name__ == "__main__":
     print 'ERROR: \'database\' must be defined in config file'
     sys.exit(-2)
 
-  dbname = dbconf['database'] 
+  dbname = dbconf['database']
   connection = mysql.connector.connect(**dbconf)
   cursor = connection.cursor()
   files = []
   tmpDir = utils.createTmpDir(dbname)
   for name in get_table_names(cursor):
-    cursor.execute("select * from " + name)
+    offset = 0
+    limit = 50000
+    hasData = True
     fname = os.path.join(tmpDir, dbname + '.' +  name + '.json')
-    print_table_to_file(cursor, fname) 
+    while hasData:
+      cursor.execute("select * from " + name + " limit " + str(limit) + " offset " + str(offset) )
+      hasData = print_table_to_file(cursor, fname)
+      offset = offset + limit
   connection.close()
-  print 'created ' + utils.compress(dbname, tmpDir, outDir) 
+  print 'created ' + utils.compress(dbname, tmpDir, outDir)
   utils.removeTmpDir(tmpDir)
