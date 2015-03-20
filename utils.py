@@ -10,7 +10,7 @@ from bson import json_util
 
 def getHost():
   hn = socket.gethostname()
-  if hn.startswith('localhost'): 
+  if hn.startswith('localhost') or hn == 'server': 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
     hn = str(s.getsockname()[0])
