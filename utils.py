@@ -51,7 +51,11 @@ def format_result(d):
   keys.sort()
   for key in keys:
     val = d[key]
-    m.update(str(val)) 
+    try:
+      m.update(str(val)) 
+    except UnicodeEncodeError:
+      m.update(val.encode('ascii', 'replace'))
+      
 
   d['_id'] = m.hexdigest()
   d['source'] = socket.gethostname() 
