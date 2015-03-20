@@ -7,16 +7,13 @@ import utils
 import ConfigParser
 
 def print_table_to_file(cursor, fname):
-  res = []
   desc = cursor.description
-  for row in cursor.fetchall():
-    d = dict(zip([col[0] for col in desc], row))
-    if len(d) > 0:
-      utils.format_result(d)
-      res.append(d)
-  if len(res) > 0:
-    with open(fname, 'w') as the_file:
-      the_file.write(utils.json_dumps(res))
+  with open(fname, 'w') as the_file:
+    for row in cursor.fetchall():
+      d = dict(zip([col[0] for col in desc], row))
+      if len(d) > 0:
+        utils.format_result(d)
+        the_file.write(utils.json_dumps(d) + '\r\n')
 
 def get_table_names(cursor):
   res = []

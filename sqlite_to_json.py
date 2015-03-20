@@ -37,14 +37,11 @@ if __name__ == "__main__":
   for name in get_table_names(cursor):
     cursor.execute("select * from " + name)
     fname = dbname + '.' +  name + '.json'
-    res = []
-    for r in cursor.fetchall():
-      if len(r) > 0:
-        utils.format_result(r)
-        res.append(r)
-    if len(res) > 0:
-      with open(tmpDir + '/' + fname, 'w') as the_file:
-        the_file.write(utils.json_dumps(res))
+    with open(tmpDir + '/' + fname, 'w') as the_file:
+      for r in cursor.fetchall():
+        if len(r) > 0:
+          utils.format_result(r)
+          the_file.write(utils.json_dumps(r) + '\r\n')
 
   connection.close()
 
