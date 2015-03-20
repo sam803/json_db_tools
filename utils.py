@@ -8,6 +8,14 @@ import md5
 import json
 from bson import json_util
 
+def getHost():
+  hn = socket.gethostname()
+  if hn.startswith('localhost'): 
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
+    hn = str(s.getsockname()[0])
+  return hn
+
 def createTmpDir(prefix=''):
   dirname = '/tmp/' + prefix + str(uuid.uuid4())
   os.mkdir(dirname)
@@ -23,7 +31,7 @@ def parseFileName(path):
 
 
 def compress(name, dirpath, outdir, mode='bz2'):
-  tarname = os.path.join(outdir, socket.gethostname() + "." + name + ".tar." + mode)
+  tarname = os.path.join(outdir, getHost() + "." + name + ".tar." + mode)
   tar = tarfile.open(tarname, "w:" + mode)
   for d,dn,fn in os.walk(dirpath):
     for f in fn:
@@ -58,6 +66,6 @@ def format_result(d):
       
 
   d['_id'] = m.hexdigest()
-  d['source'] = socket.gethostname() 
+  d['source'] = getHost() 
 
  
