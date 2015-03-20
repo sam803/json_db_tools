@@ -9,6 +9,7 @@ import gzip
 import zlib
 import uuid
 import md5
+import datetime
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:
@@ -38,7 +39,7 @@ if __name__ == "__main__":
    	    #already exists
    	    pass
       if count > 0:
-        print 'created ' + str(count) + ' records in ' + d + '.' + c
+        print str(datetime.datetime.now()) +  ' : created ' + str(count) + ' records in ' + d + '.' + c
   utils.removeTmpDir(tmpDir) 
   
    
