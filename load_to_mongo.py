@@ -11,14 +11,8 @@ import uuid
 import md5
 import datetime
 
-if __name__ == "__main__":
-  if len(sys.argv) < 2:
-    print 'Usage: ' + sys.argv[0] + ' <path_to_file>'
-    sys.exit(-1)
-
-  fpath = sys.argv[1]
+def load(fpath):
   source,dbname = utils.parseFileName(fpath)
-  
   client = pymongo.MongoClient('localhost')
   tmpDir = utils.uncompress(fpath)
   for f in os.listdir(tmpDir):
@@ -41,5 +35,13 @@ if __name__ == "__main__":
       if count > 0:
         print str(datetime.datetime.now()) +  ' : created ' + str(count) + ' records in ' + d + '.' + c
   utils.removeTmpDir(tmpDir) 
-  
+ 
+
+if __name__ == "__main__":
+  if len(sys.argv) < 2:
+    print 'Usage: ' + sys.argv[0] + ' <path_to_file>'
+    sys.exit(-1)
+
+  load(sys.argv[1])
+ 
    
