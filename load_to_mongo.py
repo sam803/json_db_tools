@@ -19,6 +19,8 @@ def load(fpath):
     with open(os.path.join(tmpDir, f), 'r') as the_file:
       count = 0
       d,c = utils.parseFileName(f)
+      if c == 'auth'
+        c = 'authz'
       for line in the_file.readlines():
         line = line.strip()
         if len(line) > 0:
