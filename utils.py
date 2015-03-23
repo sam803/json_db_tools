@@ -9,11 +9,9 @@ import json
 from bson import json_util
 
 def getHost():
-  hn = socket.gethostname()
-  if hn.startswith('localhost') or hn == 'server': 
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
-    hn = str(s.getsockname()[0])
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
+  hn = str(s.getsockname()[0])
   return hn
 
 def createTmpDir(prefix=''):
@@ -63,7 +61,6 @@ def format_result(d):
       m.update(str(val)) 
     except UnicodeEncodeError:
       m.update(val.encode('ascii', 'replace'))
-      
 
   d['_id'] = m.hexdigest()
   d['source'] = getHost() 
