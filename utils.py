@@ -6,11 +6,7 @@ import uuid
 import shutil
 import md5
 import json
-import re
-from geoip import geolite2
 from bson import json_util
-
-ipv4_re = '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
 def getHost():
   s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -55,19 +51,6 @@ def json_dumps(d):
 
 def json_loads(s):
   return json.loads(s,  object_hook=json_util.object_hook)
-
-def geolocateIPs(d):
-  for key in keys:
-    val = d[key]
-    if (type(val) is str or type(val) is unicode) and re.match(ipv4_re, val):
-      match = geolite2.lookup(val).to_dict()
-      match['lat'] = match['location'][0]
-      match['long'] = match['location'][1]
-      del d[key]
-      del match['timezone']
-      del match['subdivisions']
-      del match['location']
-      d[key] = match
 
 def format_result(d):
   m = md5.new()
