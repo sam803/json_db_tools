@@ -56,10 +56,7 @@ def json_dumps(d):
 def json_loads(s):
   return json.loads(s,  object_hook=json_util.object_hook)
 
-def format_result(d):
-  m = md5.new()
-  keys = d.keys()
-  keys.sort()
+def geolocateIPs(d):
   for key in keys:
     val = d[key]
     if (type(val) is str or type(val) is unicode) and re.match(ipv4_re, val):
@@ -71,6 +68,13 @@ def format_result(d):
       del match['subdivisions']
       del match['location']
       d[key] = match
+
+def format_result(d):
+  m = md5.new()
+  keys = d.keys()
+  keys.sort()
+  for key in keys:
+    val = d[key]
     try:
       m.update(str(val)) 
     except UnicodeEncodeError:
