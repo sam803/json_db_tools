@@ -6,6 +6,7 @@ import datetime
 import utils
 import ConfigParser
 
+
 def print_table_to_file(cursor, fname):
   desc = cursor.description
   data = False
@@ -15,7 +16,11 @@ def print_table_to_file(cursor, fname):
       d = dict(zip([col[0] for col in desc], row))
       if len(d) > 0:
         utils.format_result(d)
-        the_file.write(utils.json_dumps(d) + '\r\n')
+        cursor.execute('''select count(*) from ''' + utils.export_table + ''' where _id = %s''', (d['_id'],))
+        count = cursor.fetchone()[0]
+        if count == 0:  
+          the_file.write(utils.json_dumps(d) + '\r\n')
+          cursor.execute('''insert into ''' + utils.export_table + ''' values (%s)''', (d['_id'],))
   return data
 
 def get_table_names(cursor):
@@ -24,6 +29,9 @@ def get_table_names(cursor):
   for r in cursor.fetchall():
     res.append(r[0])
   return res 
+
+def createExportTable(cursor):
+  cursor.execute('create table if not exists ' + utils.export_table + '(_id varchar(128) not null primary key)')
 
 if __name__ == "__main__":
   if len(sys.argv) < 3:
@@ -58,9 +66,13 @@ if __name__ == "__main__":
   dbname = dbconf['database']
   connection = mysql.connector.connect(**dbconf)
   cursor = connection.cursor()
+  createExportTable(cursor) 
+
   files = []
   tmpDir = utils.createTmpDir(dbname)
   for name in get_table_names(cursor):
+    if name == utils.export_table:
+      continue
     offset = 0
     limit = 50000
     hasData = True
@@ -69,6 +81,9 @@ if __name__ == "__main__":
       cursor.execute("select * from " + name + " limit " + str(limit) + " offset " + str(offset) )
       hasData = print_table_to_file(cursor, fname)
       offset = offset + limit
+
+  #commit any changes to export table
+  connection.commit()
   connection.close()
   print 'created ' + utils.compress(dbname, tmpDir, outDir)
   utils.removeTmpDir(tmpDir)

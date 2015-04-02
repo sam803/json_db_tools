@@ -8,6 +8,8 @@ import md5
 import json
 from bson import json_util
 
+export_table = '_nhp_export'
+
 def getHost():
   s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
   s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
