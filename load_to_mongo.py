@@ -25,6 +25,9 @@ def geolocateIPs(d):
         del d[key]
         if 'subdivisions' in match:
            del match['subdivisions']
+        #switch Hong Kong with China (HK too small to fit on a map anyway
+        if 'country' in match and match['country'] = 'HK':
+          match['country'] = 'CN'
         d[key] = match
 
 
